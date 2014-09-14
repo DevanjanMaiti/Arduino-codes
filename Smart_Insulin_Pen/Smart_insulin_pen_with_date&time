@@ -28,7 +28,7 @@ void loop()
       temp2=temp;
       if(count>=300)
       {
-        flag=1; // stopped at some particular non-zero value (dosage) 
+        flag=1; // stopped at some particular non-zero value (dosage)  
       }
       else
       {
