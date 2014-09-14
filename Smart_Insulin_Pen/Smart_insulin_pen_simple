@@ -59,7 +59,7 @@ void loop()
       if(dose==0)
       {
         taken=1;
-        Serial.println(taken);
+        Serial.println(temp2);
         break;
       }
       else
