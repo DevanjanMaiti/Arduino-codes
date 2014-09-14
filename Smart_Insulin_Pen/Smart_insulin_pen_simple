@@ -3,6 +3,8 @@ int temp=0;
 int dose=0;
 int count=0;
 int flag=0;
+int temp2=0;
+int taken=0;
 
 void setup()
 {
@@ -20,7 +22,7 @@ void loop()
     if(dose!=0 && dose==temp)
   {
       count++;
-      //temp2=temp;
+      temp2=temp;
       if(count>=300)
       {
         flag=1; // stopped at some particular non-zero value (dosage) 
@@ -35,7 +37,39 @@ void loop()
       count=0;
   }
   
-  Serial.println(flag);
+  while (flag==1)
+  {
+    voltage=analogRead(A0);
+    voltage=voltage*5/1023;
+    dose=voltage_to_dosage(voltage);
+    
+    if(dose>temp2)
+    {
+      flag=0;
+      break;
+    }
+    
+    else if(dose<temp2)
+    {
+      delay(300);
+      voltage=analogRead(A0);
+      voltage=voltage*5/1023;
+      dose=voltage_to_dosage(voltage);
+    
+      if(dose==0)
+      {
+        taken=1;
+        Serial.println(taken);
+        break;
+      }
+      else
+      {
+        taken=0;
+        break;
+      }
+    }
+  }
+ 
 }
 
 
