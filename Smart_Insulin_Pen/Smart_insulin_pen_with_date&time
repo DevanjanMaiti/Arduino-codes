@@ -26,7 +26,7 @@ void loop()
   {
       count++;
       temp2=temp;
-      if(count>=1000)
+      if(count>=3000)
       {
         flag=1; // stopped at some particular non-zero value (dosage)  
       }
