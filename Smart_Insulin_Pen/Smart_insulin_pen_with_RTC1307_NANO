@@ -23,6 +23,25 @@
   Should you have any questions regarding your right to use this Software,
   contact Wisense Incorporated at www.wisense.in.
 **************************************************************************************************/
+/*--------------------------------------------------------------------------------------
+
+PIN DETAILS:
+
+TX - RX of Bluetooth Module HC-05
+RX - TX of Bluetooth Module HC-05
+GND1 - GND pin of RTC Module IN1307N
+D2 - Vcc, Slide-pot double side
+D3 - GND, Slide-pot single side
+D6 - Positive lead of buzzer
+D7 - Negative lead of buzzer
+D8 - Vcc, Vcc pin of Bluetooth Module HC-05
+GND2 - GND pin of Bluetooth Module HC-05
++5V - Vcc pin of RTC Module IN1307N
+A5 - SCL of RTC Module IN1307N
+A4 - SDA of RTC Module IN1307N
+A0 - OUtput of potentiometer
+
+---------------------------------------------------------------------------------------*/
 
 float voltage; // analog voltage read from the potentiometer on pin A0
 int temp=0; // temporary variable to store the previous dosage, used for comparison
