@@ -1,12 +1,10 @@
 /**************************************************************************************************
   Filename:       Smart_insulin_pen_with_RTC1307_NANO.ino
-  Author:         Devanjan Maiti
+  Author:         Devanjan Maiti,Chayatan
   Date:           17-09-2014 (23:42 HRS)
 
   Description:    This file contains the program to run the 
                   smart insulin pen application.
-
-  Copyright 2014  Wisense Incorporated. All rights reserved.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
   PROVIDED “AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
@@ -21,7 +19,7 @@
   (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
 
   Should you have any questions regarding your right to use this Software,
-  contact Wisense Incorporated at www.wisense.in.
+  contact Devanjan Maiti Incorporated at devanjan008@gmail.com.
 **************************************************************************************************/
 /*--------------------------------------------------------------------------------------
 
