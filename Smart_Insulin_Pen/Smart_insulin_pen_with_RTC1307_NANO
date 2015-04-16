@@ -62,6 +62,10 @@ void setup()
   pinMode(2,OUTPUT); // Vcc, required for Nano-Slide Pot Double Side
   pinMode(3,OUTPUT); // GND, required for Nano-Slide Pot Single Side
   pinMode(8,OUTPUT); // Vcc, required for Blutooth Modem
+  pinMode(10,OUTPUT); // Button Vcc
+  pinMode(11,INPUT); // Button input
+  pinMode(12,OUTPUT); // Button GND
+  
   Serial.begin(9600);
   #ifdef AVR
   Wire.begin();
@@ -70,21 +74,25 @@ void setup()
   #endif
   rtc.begin();
 
-  if (! rtc.isrunning()) {
+  if (! rtc.isrunning())
+  {
     Serial.println("RTC is NOT running!");
     // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
     // January 21, 2014 at 3am you would call:
     // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
   }
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // To adjust the date and time whenever a new program is uploaded
 }
 
 void loop()
 {   
-    digitalWrite(2,HIGH); // Always Vcc
-    digitalWrite(8,HIGH); // Always Vcc
-    digitalWrite(3,LOW); // Always GND
+    digitalWrite(2,HIGH); // Pot
+    digitalWrite(8,HIGH); // BT Module
+    digitalWrite(3,LOW); // Pot
+    digitalWrite(10,HIGH); // Button
+    digitalWrite(12,LOW); // Button
     temp=dose; // store previous value of dosage in temp variable
     voltage=analogRead(A0); // read analog voltage from pot
     voltage=voltage*5/1023; // bring the discrete integer value of voltage to the range of 0-5 V
