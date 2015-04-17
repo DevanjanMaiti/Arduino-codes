@@ -229,19 +229,19 @@ int voltage_to_dosage(float vol) // function to send dosage and RTC time and dat
   {
     
     Serial.print("Dosage: "); // send dosage, time and date information to the mobile application
-    Serial.print(temp);
+    Serial.print(EEPROM.read(address)-7, DEC);
     Serial.print(" ");
     Serial.print(" at ");
-    Serial.print(now.hour(), DEC);
+    Serial.print(EEPROM.read(address)-6, DEC);
     Serial.print(':');
-    Serial.print(now.minute(), DEC);
+    Serial.print(EEPROM.read(address)-5, DEC);
     Serial.print(':');
-    Serial.print(now.second(), DEC);
+    Serial.print(EEPROM.read(address)-4, DEC);
     Serial.print(" on ");
-    Serial.print(now.day(), DEC);
+    Serial.print(EEPROM.read(address)-3, DEC);
     Serial.print('/');
-    Serial.print(now.month(), DEC);
+    Serial.print(EEPROM.read(address)-2, DEC);
     Serial.print('/');
-    Serial.print(now.year(), DEC);
+    Serial.print(EEPROM.read(address)-1, DEC);
     Serial.println();
   }
