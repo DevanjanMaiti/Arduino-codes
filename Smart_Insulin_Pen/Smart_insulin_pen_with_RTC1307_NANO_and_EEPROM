@@ -157,7 +157,7 @@ void loop()
         address=adress+1;
         EEPROM.write(address,now.year()-2000); // 2000 is subtracted in order to store vales from 0-255 only so that it takes up only 1 byte of space. 2000 can be added later while displaying the year.
         address=adress+1;
-        if (address == 1024)         //  There are 1025 bytes in the EEPROM of Atmega328 based Arduino, so go back to 0 when we hit 1024.
+        if (address == 1024)         //  There are 1024 bytes in the EEPROM of Atmega328 based Arduino, so go back to 0 when we hit 1024.
         address = 0;
         
         Send_to_App(); // function call to send dosage and RTC time and date values to the Application running on the smartphone
@@ -200,6 +200,8 @@ void loop()
      taken=0;
      count2=0;
  }
+ 
+ END: 
 }
 
 
