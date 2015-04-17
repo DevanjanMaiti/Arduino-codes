@@ -205,7 +205,7 @@ void loop()
 }
 
 
-int voltage_to_dosage(float vol) // function to send dosage and RTC time and date values to the Application running on the smartphone
+int voltage_to_dosage(float vol) // function to convert voltage value to dosage
   {
     int dosage;
     
@@ -225,10 +225,10 @@ int voltage_to_dosage(float vol) // function to send dosage and RTC time and dat
     return dosage;
   }
   
-  void Send_to_App() // function to display RTC date and time
+  void Send_to_App() // function to send dosage and RTC time and date values to the Application running on the smartphone
   {
     
-    Serial.print("Dosage: "); // send dosage, time and date information to the mobile application
+    Serial.print("Dosage: "); // send dosage, time and date information to the  Application
     Serial.print(EEPROM.read(address)-7, DEC);
     Serial.print(" ");
     Serial.print(" at ");
