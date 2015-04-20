@@ -144,19 +144,19 @@ void loop()
         DateTime now = rtc.now();
         
         EEPROM.write(address,temp);
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.hour());
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.minute());
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.second());
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.day());
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.month());
-        address=adress+1;
+        address=address+1;
         EEPROM.write(address,now.year()-2000); // 2000 is subtracted in order to store vales from 0-255 only so that it takes up only 1 byte of space. 2000 can be added later while displaying the year.
-        address=adress+1;
+        address=address+1;
         if (address == 1024)         //  There are 1024 bytes in the EEPROM of Atmega328 based Arduino, so go back to 0 when we hit 1024.
         address = 0;
         
@@ -202,6 +202,7 @@ void loop()
  }
  
  END: 
+ ;
 }
 
 
@@ -244,4 +245,5 @@ int voltage_to_dosage(float vol) // function to convert voltage value to dosage
     Serial.print('/');
     Serial.print(EEPROM.read(address)-1, DEC);
     Serial.println();
-  }
+  
+ }
