@@ -15,8 +15,8 @@ void loop() {
 int slow_timer_count = 0;
 int fast_timer_count = 0;
 
-double slow_timer_threshold = 100000;
-double fast_timer_threshold = 10000;
+long slow_timer_threshold = 100000;
+long fast_timer_threshold = 10000;
 
 int ledbar_output;
 
