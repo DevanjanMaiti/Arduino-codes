@@ -102,51 +102,23 @@ delay(100);
 } // End of Loop
 
 void buzzer_slow() {
-digitalWrite(2,HIGH);
-delay(1000);
-digitalWrite(2,LOW);
-delay(1000);
-digitalWrite(2,HIGH);
-delay(1000);
-digitalWrite(2,LOW);
-delay(1000);
-digitalWrite(2,HIGH);
-delay(1000);
-digitalWrite(2,LOW);
-delay(1000);
+  int buzz_count;
+
+for(buzz_count=0;buzz_count<3;buzz_count++) {
+  digitalWrite(2,HIGH);
+  delay(1000);
+  digitalWrite(2,LOW);
+  delay(1000);
+  }  
 }
 
 void buzzer_fast() {
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
-digitalWrite(2,HIGH);
-delay(100);
-digitalWrite(2,LOW);
-delay(100);
+int buzz_count;
+
+for(buzz_count=0;buzz_count<8;buzz_count++) {
+  digitalWrite(2,HIGH);
+  delay(100);
+  digitalWrite(2,LOW);
+  delay(100);
+  }
 }
