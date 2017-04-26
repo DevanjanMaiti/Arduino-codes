@@ -38,7 +38,7 @@
 
 #ifdef LED_BAR
 #include <Grove_LED_Bar.h>
-Grove_LED_Bar bar(9, 8, 0);  // Clock pin, Data pin, Orientation
+Grove_LED_Bar bar(9, 8, 0);  // CLOCK PIN, DATA PIN, ORIENTATION
 #endif
 
 // PIN DEFINITIONS
