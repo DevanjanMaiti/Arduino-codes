@@ -58,7 +58,6 @@ int moisture_okay      = 400;
 void setup() {
 
 // PIN DIRECTIONS
-pinMode(moisture_level_pin,INPUT);
 pinMode(pump_on_pin,OUTPUT);
 pinMode(buzzer_pin,OUTPUT);
 pinMode(pump_error_led,OUTPUT);
