@@ -140,7 +140,7 @@ void buzzer_fast() {
 // LED BAR FUNCTION
 void led_bar(unsigned int moisture_level) {
 
-  if (moisture_level>=0 && moisture_level<100) // Maximum Moisture
+  if (moisture_level>=0 && moisture_level<100) // MAXIMUM MOISTURE
   {
     ledbar_output=0x3ff;
   }
