@@ -130,7 +130,7 @@ void loop() {
   String string_rd_val_anlg = String(rd_val_anlg); // INT TO STRING CONVERSION
 
 #ifdef LED_MON_EN  
-  if (rd_val_anlg > adc_rd_thresh_val) { // MODIFY CODE ACCORDING TO DEBUG LOGIC
+  if (rd_val_anlg < adc_rd_thresh_val) { // MODIFY CODE ACCORDING TO DEBUG LOGIC
     digitalWrite(13,HIGH);               // NOTE: THERE WILL BE A LAG BETWEEN ACTUAL CHANGE OF
   } else {                               //       STIMULUS AND CHANGE OF LED STATUS DUE TO THE 
     digitalWrite(13,LOW);                //       LARGE LOOP USED IN THE CODE
@@ -160,6 +160,7 @@ void loop() {
 
 // SEND GET REQUEST MESSAGE LENGTH FOLLOWED BY THE REQUEST
   getString_concat = getString_start;
+  getString_concat += API_key; // APPEND API KEY FOR THE CHANNEL
 
 #ifdef MON_ANALOG
   getString_concat += getString_fval1;
@@ -178,6 +179,7 @@ void loop() {
 #endif
 
   int strLen = getString_concat.length(); // LENGTH OF GET STRING
+  strLen = strLen + 2; // 2 BYTES FOR CR(CARRIAGE RETURN) AND NL(NEXT LINE) CHARACTERS
   String string_strLen = String(strLen);
 
   strTemp = "AT+CIPSEND="; // OVERWRITING PREVIOUS VALUE OF strTemp
