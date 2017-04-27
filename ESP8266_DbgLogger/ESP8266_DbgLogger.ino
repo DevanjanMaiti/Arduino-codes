@@ -9,8 +9,12 @@
                   data at a desired interval to an online Data Analytics Platform
                   like ThingSpeak (https://thingspeak.com/).
                   NOTE: The ESP8266 Module is assumed to be configured in Mode 0/3
-                  i.e. to support client mode and already configured to connect to
-                  one of the available WLAN networks.
+                        i.e. to support client mode and already configured to connect
+                        to one of the available WLAN networks.
+                  NOTE: The ThingSpeak Platform requires at least 15 seconds interval
+                        between two consecutive updates.
+                  NOTE: Change the jumper position on the board to be able to control
+                        the CH_PD Pin on the ESP8266 Module.
                   
  The MIT License (MIT)
  
@@ -35,18 +39,20 @@
   contact Devanjan Maiti at devanjan008@gmail.com.
   
 ********************************************************************************/
-#define THINGSPEAK       // USE THINGSPEAK CLOUD
-#define MON_ANALOG       // ENABLE ANALOG CHANNEL MONITOR
-#define MON_DIGITAL_CH1  // ENABLE DIGITAL CHANNEL 1 MONITOR
-#define MON_DIGITAL_CH2  // ENABLE DIGITAL CHANNEL 2 MONITOR
-#define ANALOG_AVG_EN    // ENABLE AVERAGING FOR ADC DATA
-#define LED_MON_EN       // ENABLE ON-BOARD DEBUG LED
+#define THINGSPEAK        // USE THINGSPEAK CLOUD
+#define MON_ANALOG        // ENABLE ANALOG CHANNEL MONITOR
+#define MON_DIGITAL_CH1   // ENABLE DIGITAL CHANNEL 1 MONITOR
+#define MON_DIGITAL_CH2   // ENABLE DIGITAL CHANNEL 2 MONITOR
+#define ANALOG_AVG_EN     // ENABLE AVERAGING FOR ADC DATA
+#define LED_MON_EN        // ENABLE ON-BOARD DEBUG LED
+#define ESP_LOW_PWR_MODE  // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
 
 // PIN DEFINITIONS ---------------
 const int dbg_anlg_pin     = 0;
 const int dbg_dgtl_ch1_pin = 3;
 const int dbg_dgtl_ch2_pin = 4;
 const int mon_led_pin      = 13;
+const int ch_pd_ctrl_pin   = 9;
 
 // VARIABLES --------------
 int    rd_val_anlg;
@@ -84,6 +90,10 @@ void setup() {
   pinMode(mon_led_pin,OUTPUT);
 #endif
 
+#ifdef ESP_LOW_PWR_MODE
+  pinMode(ch_pd_ctrl_pin,OUTPUT);
+#endif
+
 // SERIAL BAUD RATE CONFIGURATION
   Serial.begin(115200);
     
@@ -94,6 +104,11 @@ void setup() {
 
 // LOOP ------------------------------------------------------------------
 void loop() {
+
+#ifdef ESP_LOW_PWR_MODE
+// DISABLE ESP8266 LOW POWER MODE TO SEND PACKETS
+  digitalWrite(ch_pd_ctrl_pin,HIGH);
+#endif
 
 #ifdef MON_ANALOG
 
@@ -115,7 +130,7 @@ void loop() {
   String string_rd_val_anlg = String(rd_val_anlg); // INT TO STRING CONVERSION
 
 #ifdef LED_MON_EN  
-  if (rd_val_anlg > adc_rd_thresh_val) { // MODIFY LOGIC ACCORDING TO DEBUG LOGIC
+  if (rd_val_anlg > adc_rd_thresh_val) { // MODIFY CODE ACCORDING TO DEBUG LOGIC
     digitalWrite(13,HIGH);               // NOTE: THERE WILL BE A LAG BETWEEN ACTUAL CHANGE OF
   } else {                               //       STIMULUS AND CHANGE OF LED STATUS DUE TO THE 
     digitalWrite(13,LOW);                //       LARGE LOOP USED IN THE CODE
@@ -125,8 +140,15 @@ void loop() {
 #endif
 
 // TODO: Digital pins with event-driven modes
+#ifdef MON_DIGITAL_CH1
+  rd_val_dgtl_ch1 = digitalRead(dbg_dgtl_ch1_pin);
   String string_rd_val_dgtl_ch1 = String(rd_val_dgtl_ch1); // INT TO STRING CONVERSION
+#endif
+
+#ifdef MON_DIGITAL_CH2
+  rd_val_dgtl_ch2 = digitalRead(dbg_dgtl_ch2_pin);
   String string_rd_val_dgtl_ch2 = String(rd_val_dgtl_ch2); // INT TO STRING CONVERSION
+#endif
 
 // ESTABLISH CONNECTION WITH SERVER
   String strTemp = "AT+CIPSTART=\"TCP\",\"";
@@ -155,20 +177,25 @@ void loop() {
   getString_concat += string_rd_val_dgtl_ch2;
 #endif
 
-  int strLen = getString_concat.length();
+  int strLen = getString_concat.length(); // LENGTH OF GET STRING
   String string_strLen = String(strLen);
 
   strTemp = "AT+CIPSEND="; // OVERWRITING PREVIOUS VALUE OF strTemp
   strTemp += string_strLen;
   
-  Serial.println(strTemp);
+  Serial.println(strTemp); // SENDING LENGTH
   delay(5*1000); // 5 SEC
   
-  Serial.println(getString_concat);
-  delay(5000);
+  Serial.println(getString_concat); // SENDING GET REQUEST
+  delay(5*1000); // 5 SEC
 
 // CLOSE CONNECTION  
   Serial.println("AT+CIPCLOSE");
+
+#ifdef ESP_LOW_PWR_MODE
+// PUT ESP8266 TO LOW POWER/SLEEP MODE FOR THE ENTIRE REPEAT INTERVAL
+  digitalWrite(ch_pd_ctrl_pin,LOW);
+#endif
 
 // REPEAT INTERVAL (EXCLUDING DELAYS BETWEEN AT COMMANDS AND OTHER LOGIC)  
   delay(15*1000); // 15 SEC INTERVAL
