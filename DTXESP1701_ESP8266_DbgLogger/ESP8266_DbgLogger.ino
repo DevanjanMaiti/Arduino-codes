@@ -41,11 +41,12 @@
 ********************************************************************************/
 #define THINGSPEAK        // USE THINGSPEAK CLOUD
 #define MON_ANALOG        // ENABLE ANALOG CHANNEL MONITOR
-#define MON_DIGITAL_CH1   // ENABLE DIGITAL CHANNEL 1 MONITOR
-#define MON_DIGITAL_CH2   // ENABLE DIGITAL CHANNEL 2 MONITOR
-#define ANALOG_AVG_EN     // ENABLE AVERAGING FOR ADC DATA
+//#define MON_DIGITAL_CH1   // ENABLE DIGITAL CHANNEL 1 MONITOR
+//#define MON_DIGITAL_CH2   // ENABLE DIGITAL CHANNEL 2 MONITOR
+//#define ANALOG_AVG_EN     // ENABLE AVERAGING FOR ADC DATA
 #define LED_MON_EN        // ENABLE ON-BOARD DEBUG LED
-#define ESP_LOW_PWR_MODE  // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
+#define EVENT_DRIVEN_MODE // ENABLE EVENT DRIVEN DATA UPDATES
+//#define ESP_LOW_PWR_MODE  // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
 
 // PIN DEFINITIONS ---------------
 const int dbg_anlg_pin     = 0;
@@ -110,6 +111,7 @@ void loop() {
   digitalWrite(ch_pd_ctrl_pin,HIGH);
 #endif
 
+// ANALOG CHANNEL --------------------------------------
 #ifdef MON_ANALOG
 
 #ifdef ANALOG_AVG_EN
@@ -131,24 +133,61 @@ void loop() {
 
 #ifdef LED_MON_EN  
   if (rd_val_anlg < adc_rd_thresh_val) { // MODIFY CODE ACCORDING TO DEBUG LOGIC
-    digitalWrite(13,HIGH);               // NOTE: THERE WILL BE A LAG BETWEEN ACTUAL CHANGE OF
+    digitalWrite(mon_led_pin,HIGH);      // NOTE: THERE WILL BE A LAG BETWEEN ACTUAL CHANGE OF
   } else {                               //       STIMULUS AND CHANGE OF LED STATUS DUE TO THE 
-    digitalWrite(13,LOW);                //       LARGE LOOP USED IN THE CODE
+    digitalWrite(mon_led_pin,LOW);       //       LOOP USED IN THE CODE
   }
 #endif
 
-#endif
+#endif //------------------------------------------------
 
-// TODO: Digital pins with event-driven modes
+// DIGITAL CHANNEL 1 ------------------------------------
 #ifdef MON_DIGITAL_CH1
-  rd_val_dgtl_ch1 = digitalRead(dbg_dgtl_ch1_pin);
-  String string_rd_val_dgtl_ch1 = String(rd_val_dgtl_ch1); // INT TO STRING CONVERSION
+
+#ifdef EVENT_DRIVEN_MODE
+
+#ifdef LED_MON_EN && #ifndef MON_ANALOG
+  digitalWrite(mon_led_pin,HIGH);   // WAITING FOR TRIGGER
 #endif
 
-#ifdef MON_DIGITAL_CH2
-  rd_val_dgtl_ch2 = digitalRead(dbg_dgtl_ch2_pin);
-  String string_rd_val_dgtl_ch2 = String(rd_val_dgtl_ch2); // INT TO STRING CONVERSION
+  while(!digitalRead(dbg_dgtl_ch1_pin)) { // WAIT FOR LOW TO HIGH TRANSITION
+
+#ifdef LED_MON_EN && #ifndef MON_ANALOG
+    digitalWrite(mon_led_pin,LOW);   // TRIGGER RECEIVED
 #endif
+
+    rd_val_dgtl_ch1 = 1; // SET CHANNEL 1 UPDATE DATA TO HIGH
+  };
+#else
+  rd_val_dgtl_ch1 = digitalRead(dbg_dgtl_ch1_pin);
+#endif
+
+  String string_rd_val_dgtl_ch1 = String(rd_val_dgtl_ch1); // INT TO STRING CONVERSION
+#endif //------------------------------------------------
+
+// DIGITAL CHANNEL 2 ------------------------------------
+#ifdef MON_DIGITAL_CH2
+
+#ifdef EVENT_DRIVEN_MODE
+
+#ifdef LED_MON_EN && #ifndef MON_ANALOG && #ifndef MON_DIGITAL_CH1
+  digitalWrite(mon_led_pin,HIGH);   // WAITING FOR TRIGGER
+#endif
+
+  while(!digitalRead(dbg_dgtl_ch2_pin)) { // WAIT FOR LOW TO HIGH TRANSITION
+
+#ifdef LED_MON_EN && #ifndef MON_ANALOG && #ifndef MON_DIGITAL_CH1
+    digitalWrite(mon_led_pin,LOW);   // TRIGGER RECEIVED
+#endif
+
+  rd_val_dgtl_ch2 = 1; // SET CHANNEL 2 UPDATE DATA TO HIGH
+  };
+#else
+  rd_val_dgtl_ch2 = digitalRead(dbg_dgtl_ch2_pin);
+#endif
+
+  String string_rd_val_dgtl_ch2 = String(rd_val_dgtl_ch2); // INT TO STRING CONVERSION
+#endif //--------------------------------------------------
 
 // ESTABLISH CONNECTION WITH SERVER
   String strTemp = "AT+CIPSTART=\"TCP\",\"";
@@ -197,6 +236,11 @@ void loop() {
 #ifdef ESP_LOW_PWR_MODE
 // PUT ESP8266 TO LOW POWER/SLEEP MODE FOR THE ENTIRE REPEAT INTERVAL
   digitalWrite(ch_pd_ctrl_pin,LOW);
+#endif
+
+#ifdef EVENT_DRIVEN_MODE  // RESET CHANNEL READ VALUES
+  rd_val_dgtl_ch1 = 0;
+  rd_val_dgtl_ch2 = 0;
 #endif
 
 // REPEAT INTERVAL (EXCLUDING DELAYS BETWEEN AT COMMANDS AND OTHER LOGIC)  
