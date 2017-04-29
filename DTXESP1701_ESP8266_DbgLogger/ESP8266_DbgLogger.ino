@@ -39,31 +39,32 @@
   contact Devanjan Maiti at devanjan008@gmail.com.
   
 ********************************************************************************/
-#define THINGSPEAK        // USE THINGSPEAK CLOUD
-#define MON_ANALOG        // ENABLE ANALOG CHANNEL MONITOR
-//#define MON_DIGITAL_CH1   // ENABLE DIGITAL CHANNEL 1 MONITOR
-//#define MON_DIGITAL_CH2   // ENABLE DIGITAL CHANNEL 2 MONITOR
-//#define ANALOG_AVG_EN     // ENABLE AVERAGING FOR ADC DATA
-#define LED_MON_EN        // ENABLE ON-BOARD DEBUG LED
-#define EVENT_DRIVEN_MODE // ENABLE EVENT DRIVEN DATA UPDATES
-//#define ESP_LOW_PWR_MODE  // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
+#define THINGSPEAK          // USE THINGSPEAK CLOUD
+//#define MON_ANALOG          // ENABLE ANALOG CHANNEL MONITOR
+#define MON_DIGITAL_CH1     // ENABLE DIGITAL CHANNEL 1 MONITOR
+//#define MON_DIGITAL_CH2     // ENABLE DIGITAL CHANNEL 2 MONITOR
+#define ANALOG_AVG_EN       // ENABLE AVERAGING FOR ADC DATA
+#define LED_MON_EN          // ENABLE ON-BOARD DEBUG LED
+#define EVENT_DRIVEN_MODE   // ENABLE EVENT DRIVEN DATA UPDATES
+//#define ESP_LOW_PWR_MODE    // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
 
 // PIN DEFINITIONS ---------------
-const int dbg_anlg_pin     = 0;
-const int dbg_dgtl_ch1_pin = 3;
-const int dbg_dgtl_ch2_pin = 4;
-const int mon_led_pin      = 13;
-const int ch_pd_ctrl_pin   = 9;
+const uint8_t dbg_anlg_pin     = 0;
+const uint8_t dbg_dgtl_ch1_pin = 3;
+const uint8_t dbg_dgtl_ch2_pin = 4;
+const uint8_t mon_led_pin      = 13;
+const uint8_t ch_pd_ctrl_pin   = 9;
 
 // VARIABLES --------------
-int    rd_val_anlg;
-int    rd_val_dgtl_ch1;
-int    rd_val_dgtl_ch2;
-String getString_concat;
+unsigned int rd_val_anlg;
+unsigned int rd_val_dgtl_ch1;
+unsigned int rd_val_dgtl_ch2;
+String       getString_concat;
 
 // CONSTANTS ------
-int anlg_ch_avg_count = 10;  // NUMBER OF SAMPLES TO AVERAGE IN "ANALOG_AVG_EN" MODE
-int adc_rd_thresh_val = 500; // ANALOG DATA VALUE COMPARISON THRESHOLD
+const uint8_t anlg_ch_avg_count = 10;      // NUMBER OF SAMPLES TO AVERAGE IN "ANALOG_AVG_EN" MODE
+const uint8_t adc_rd_thresh_val = 500;     // ANALOG DATA VALUE COMPARISON THRESHOLD
+const int     push_interval     = 2*1000;  // 2 SECS
 
 // STRING DEFINITIONS ------------------------
 String getString_start = "GET /update?key=";
@@ -115,7 +116,7 @@ void loop() {
 #ifdef MON_ANALOG
 
 #ifdef ANALOG_AVG_EN
-  int adc_rd_count;
+  unsigned int adc_rd_count;
   rd_val_anlg = 0; // RE-INITIALIZE TO ZERO
 
   for (adc_rd_count = 0; adc_rd_count < anlg_ch_avg_count; adc_rd_count++) {
@@ -123,7 +124,7 @@ void loop() {
     delay(0.5*1000); // 0.5 msecs; MINIMUM 0.1 msecs GAP BETWEEN CONSECUTIVE READS FROM ADC
   }
 
-  rd_val_anlg = int(rd_val_anlg/adc_rd_count);
+  rd_val_anlg = unsigned int(rd_val_anlg/adc_rd_count);
   
 #else
   rd_val_anlg = analogRead(A0);
@@ -138,26 +139,28 @@ void loop() {
     digitalWrite(mon_led_pin,LOW);       //       LOOP USED IN THE CODE
   }
 #endif
-
 #endif //------------------------------------------------
 
 // DIGITAL CHANNEL 1 ------------------------------------
 #ifdef MON_DIGITAL_CH1
-
 #ifdef EVENT_DRIVEN_MODE
 
-#ifdef LED_MON_EN && #ifndef MON_ANALOG
+#ifdef LED_MON_EN
+#ifndef MON_ANALOG
   digitalWrite(mon_led_pin,HIGH);   // WAITING FOR TRIGGER
 #endif
+#endif
 
-  while(!digitalRead(dbg_dgtl_ch1_pin)) { // WAIT FOR LOW TO HIGH TRANSITION
+  while(!digitalRead(dbg_dgtl_ch1_pin)) {}; // WAIT FOR LOW TO HIGH TRANSITION
 
-#ifdef LED_MON_EN && #ifndef MON_ANALOG
-    digitalWrite(mon_led_pin,LOW);   // TRIGGER RECEIVED
+#ifdef LED_MON_EN
+#ifndef MON_ANALOG
+  digitalWrite(mon_led_pin,LOW);  // TRIGGER RECEIVED
+#endif
 #endif
 
     rd_val_dgtl_ch1 = 1; // SET CHANNEL 1 UPDATE DATA TO HIGH
-  };
+
 #else
   rd_val_dgtl_ch1 = digitalRead(dbg_dgtl_ch1_pin);
 #endif
@@ -167,21 +170,28 @@ void loop() {
 
 // DIGITAL CHANNEL 2 ------------------------------------
 #ifdef MON_DIGITAL_CH2
-
 #ifdef EVENT_DRIVEN_MODE
 
-#ifdef LED_MON_EN && #ifndef MON_ANALOG && #ifndef MON_DIGITAL_CH1
+#ifdef LED_MON_EN
+#ifndef MON_ANALOG
+#ifndef MON_DIGITAL_CH1
   digitalWrite(mon_led_pin,HIGH);   // WAITING FOR TRIGGER
 #endif
-
-  while(!digitalRead(dbg_dgtl_ch2_pin)) { // WAIT FOR LOW TO HIGH TRANSITION
-
-#ifdef LED_MON_EN && #ifndef MON_ANALOG && #ifndef MON_DIGITAL_CH1
-    digitalWrite(mon_led_pin,LOW);   // TRIGGER RECEIVED
+#endif
 #endif
 
-  rd_val_dgtl_ch2 = 1; // SET CHANNEL 2 UPDATE DATA TO HIGH
-  };
+  while(!digitalRead(dbg_dgtl_ch2_pin)) {}; // WAIT FOR LOW TO HIGH TRANSITION
+
+#ifdef LED_MON_EN
+#ifndef MON_ANALOG
+#ifndef MON_DIGITAL_CH1
+  digitalWrite(mon_led_pin,LOW);  // TRIGGER RECEIVED
+#endif
+#endif
+#endif
+
+    rd_val_dgtl_ch2 = 1; // SET CHANNEL 2 UPDATE DATA TO HIGH
+  
 #else
   rd_val_dgtl_ch2 = digitalRead(dbg_dgtl_ch2_pin);
 #endif
@@ -195,7 +205,7 @@ void loop() {
   strTemp += "\",80";
   
   Serial.println(strTemp);
-  delay(5*1000); // 5 SEC DELAY
+  delay(push_interval); 
 
 // SEND GET REQUEST MESSAGE LENGTH FOLLOWED BY THE REQUEST
   getString_concat = getString_start;
@@ -209,7 +219,6 @@ void loop() {
 #ifdef MON_DIGITAL_CH1
   getString_concat += getString_fval2;
   getString_concat += string_rd_val_dgtl_ch1;
-
 #endif
 
 #ifdef MON_DIGITAL_CH2
@@ -225,10 +234,10 @@ void loop() {
   strTemp += string_strLen;
   
   Serial.println(strTemp); // SENDING LENGTH
-  delay(5*1000); // 5 SEC
+  delay(push_interval); 
   
   Serial.println(getString_concat); // SENDING GET REQUEST
-  delay(5*1000); // 5 SEC
+  delay(push_interval); 
 
 // CLOSE CONNECTION  
   Serial.println("AT+CIPCLOSE");
@@ -244,8 +253,8 @@ void loop() {
 #endif
 
 // REPEAT INTERVAL (EXCLUDING DELAYS BETWEEN AT COMMANDS AND OTHER LOGIC)  
-  delay(15*1000); // 15 SEC INTERVAL
+  delay(10*1000); // 10 SEC INTERVAL
 
-} //---------------------------------------
+} //-------------------------------------------------------------------------
 
-// END OF CODE ----------------------------
+// END OF CODE --------------------------------------------------------------
