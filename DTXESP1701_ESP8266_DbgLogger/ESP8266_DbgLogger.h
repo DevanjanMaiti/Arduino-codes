@@ -70,10 +70,3 @@ String Server_IP_addr = "184.106.153.149";
 String API_key        = "RCG9Q2D4NO5KRRHF";
 #endif
 
-// FUNCTION TO PUSH PASSED STRING TO CLOUD PLATFORM OVER WIFI
-void ESP_pushData() {
-	
-	
-	
-	
-}
