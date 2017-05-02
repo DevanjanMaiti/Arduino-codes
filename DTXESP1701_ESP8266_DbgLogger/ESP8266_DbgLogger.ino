@@ -39,46 +39,10 @@
   contact Devanjan Maiti at devanjan008@gmail.com.
   
 ********************************************************************************/
-#define THINGSPEAK          // USE THINGSPEAK CLOUD
-#define MON_ANALOG          // ENABLE ANALOG CHANNEL MONITOR
-#define MON_DIGITAL_CH1     // ENABLE DIGITAL CHANNEL 1 MONITOR
-#define MON_DIGITAL_CH2     // ENABLE DIGITAL CHANNEL 2 MONITOR
-#define ANALOG_AVG_EN       // ENABLE AVERAGING FOR ADC DATA
-#define LED_MON_EN          // ENABLE ON-BOARD DEBUG LED
-#define EVENT_DRIVEN_MODE   // ENABLE EVENT DRIVEN DATA UPDATES
-#define ESP_LOW_PWR_MODE    // ENABLE LOW POWER MODE (USES CH_PD PIN ON ESP8266)
-
-// PIN DEFINITIONS ---------------
-const uint8_t dbg_anlg_pin     = 0;
-const uint8_t dbg_dgtl_ch1_pin = 3;
-const uint8_t dbg_dgtl_ch2_pin = 4;
-const uint8_t mon_led_pin      = 13;
-const uint8_t ch_pd_ctrl_pin   = 9;
-
-// VARIABLES --------------
-unsigned int rd_val_anlg;
-unsigned int rd_val_dgtl_ch1;
-unsigned int rd_val_dgtl_ch2;
-String       getString_concat;
-
-// CONSTANTS ------
-const uint8_t anlg_ch_avg_count = 10;      // NUMBER OF SAMPLES TO AVERAGE IN "ANALOG_AVG_EN" MODE
-const uint8_t adc_rd_thresh_val = 500;     // ANALOG DATA VALUE COMPARISON THRESHOLD
-const int     push_interval     = 2*1000;  // 2 SECS
-
-// STRING DEFINITIONS ------------------------
-String getString_start = "GET /update?key=";
-String getString_fval1 = "&field1=";
-String getString_fval2 = "&field2=";
-String getString_fval3 = "&field3=";
-
-#ifdef THINGSPEAK
-String Server_IP_addr = "184.106.153.149";
-String API_key        = "RCG9Q2D4NO5KRRHF";
-#endif
+#include "ESP8266_DbgLogger.h"
 
 // SETUP -------------------------------------
-void setup() {
+void setup() { 
 
 #ifdef MON_DIGITAL_CH1  
   pinMode(dbg_dgtl_ch1_pin,INPUT);
