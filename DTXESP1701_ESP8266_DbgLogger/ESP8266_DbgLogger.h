@@ -60,6 +60,9 @@ const uint8_t adc_rd_thresh_val = 500;     // ANALOG DATA VALUE COMPARISON THRES
 const int     push_interval     = 2*1000;  // 2 SECS
 
 // STRING DEFINITIONS ------------------------
+String WiFi_SSID = "Unicornboys";
+String WiFi_Pswd = "pizza311";
+
 String getString_start = "GET /update?key=";
 String getString_fval1 = "&field1=";
 String getString_fval2 = "&field2=";
@@ -69,4 +72,3 @@ String getString_fval3 = "&field3=";
 String Server_IP_addr = "184.106.153.149";
 String API_key        = "RCG9Q2D4NO5KRRHF";
 #endif
-
