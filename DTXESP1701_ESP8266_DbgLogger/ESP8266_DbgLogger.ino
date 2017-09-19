@@ -63,8 +63,17 @@ void setup() {
 // SERIAL BAUD RATE CONFIGURATION
   Serial.begin(115200);
     
-// INITIAL ESP8266 RESET
+// INITIAL ESP8266 SETUP (WIFI CONNECTION)
   Serial.println("AT+RST");
+  Serial.println("AT+CWMODE=3");
+  delay(push_interval);
+  String strTemp = "AT+CWJAP=\"";
+  strTemp += WiFi_SSID;
+  strTemp += "\",\"";
+  strTemp += WiFi_Pswd;
+  strTemp += "\"";
+  Serial.println(strTemp);
+  delay(push_interval);
   
 } //------------------------------------------
 
@@ -85,7 +94,7 @@ void loop() {
 
   for (adc_rd_count = 0; adc_rd_count < anlg_ch_avg_count; adc_rd_count++) {
     rd_val_anlg += analogRead(A0);
-    delay(0.5*1000); // 0.5 msecs; MINIMUM 0.1 msecs GAP BETWEEN CONSECUTIVE READS FROM ADC
+    delay(0.5); // 0.5 ms; MINIMUM 0.1 ms GAP BETWEEN CONSECUTIVE READS FROM ADC
   }
 
   rd_val_anlg = unsigned int(rd_val_anlg/adc_rd_count);
