@@ -63,8 +63,11 @@ void setup() {
 // SERIAL BAUD RATE CONFIGURATION
   Serial.begin(115200);
     
-// INITIAL ESP8266 SETUP (WIFI CONNECTION)
+// INITIAL RESET
   Serial.println("AT+RST");
+
+#ifdef WIFI_CONNECT  
+// INITIAL ESP8266 SETUP (WIFI CONNECTION)
   Serial.println("AT+CWMODE=3");
   delay(push_interval);
   String strTemp = "AT+CWJAP=\"";
@@ -74,6 +77,7 @@ void setup() {
   strTemp += "\"";
   Serial.println(strTemp);
   delay(push_interval);
+#endif
   
 } //------------------------------------------
 
