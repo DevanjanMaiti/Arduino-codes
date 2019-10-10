@@ -5,9 +5,8 @@
   Date:           26-04-2017
   Description:    This file contains the program to run on the DTXESP1701 Board.
                   The setup is designed to be able to simultaneously monitor up
-                  to 1 Analog and 2 Digital Channels simultaneously and upload 
-                  data at a desired interval to an online Data Analytics Platform
-                  like ThingSpeak (https://thingspeak.com/).
+                  to 1 Analog and 2 Digital Channels and upload data at a desired 
+                  interval to an online Data Analytics Platform like ThingSpeak (https://thingspeak.com/).
                   NOTE: The ESP8266 Module is assumed to be configured in Mode 0/3
                         i.e. to support client mode and already configured to connect
                         to one of the available WLAN networks.
